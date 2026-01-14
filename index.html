@@ -692,37 +692,11 @@
 
         <script>
   const link = document.getElementById('viewDetailsLink');
-  const modalEl = document.getElementById('detailsModal');
-  const modalBody = document.getElementById('modalBodyText');
+  console.log('link found:', link);
 
-  const modal = new bootstrap.Modal(modalEl, { backdrop: true, keyboard: true });
-
-  // 0 = closed, 1 = open (original), 2 = open (changed)
-  let state = 0;
-
-  link.addEventListener('click', (e) => {
+  link?.addEventListener('click', (e) => {
     e.preventDefault();
-
-    if (state === 0) {
-      modal.show();
-      state = 1;
-      return;
-    }
-
-    if (state === 1) {
-      modalBody.textContent = 'test';
-      state = 2;
-      return;
-    }
-
-    modal.hide();
-    state = 0;
-  });
-
-  // If user closes via X / ESC / backdrop, reset state + text
-  modalEl.addEventListener('hidden.bs.modal', () => {
-    state = 0;
-    modalBody.textContent = 'Original text';
+    alert('CLICK WORKS');
   });
 </script>
         
