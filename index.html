@@ -120,7 +120,7 @@
                                 <div class="card bg-primary text-white mb-4">
                                     <div class="card-body">Primary Card</div>
                                     <div class="card-footer d-flex align-items-center justify-content-between">
-                                        <a class="small text-white stretched-link" href="#" data-bs-toggle="modal" data-bs-target="#detailsModal">View Details</a>
+                                        <a class="small text-white stretched-link" href="#" id="viewDetailsLink">View Details</a>
                                         <div class="small text-white"><i class="fas fa-angle-right"></i></div>
                                     </div>
                                 </div>
@@ -677,6 +677,7 @@
                 </footer>
             </div>
         </div>
+        
         <div class="modal fade" id="detailsModal" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
@@ -684,17 +685,53 @@
         <h5 class="modal-title">Details</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
-      <div class="modal-body">
-        This is a Bootstrap popup.
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-          Close
-        </button>
+      <div class="modal-body" id="modalBodyText">
+        Original text
       </div>
     </div>
   </div>
 </div>
+
+        <script>
+  const link = document.getElementById('viewDetailsLink');
+  const modalEl = document.getElementById('detailsModal');
+  const modalBody = document.getElementById('modalBodyText');
+
+  const modal = new bootstrap.Modal(modalEl);
+
+  // 0 = closed
+  // 1 = open (original text)
+  // 2 = open (text changed)
+  let state = 0;
+
+  link.addEventListener('click', function (e) {
+    e.preventDefault();
+
+    switch (state) {
+      case 0:
+        modal.show();
+        state = 1;
+        break;
+
+      case 1:
+        modalBody.textContent = 'test';
+        state = 2;
+        break;
+
+      case 2:
+        modal.hide();
+        state = 0;
+        break;
+    }
+  });
+
+  // Reset if user closes modal manually (ESC, X, backdrop)
+  modalEl.addEventListener('hidden.bs.modal', () => {
+    state = 0;
+    modalBody.textContent = 'Original text';
+  });
+</script>
+        
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
         <script src="js/scripts.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
