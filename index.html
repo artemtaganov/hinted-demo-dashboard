@@ -678,16 +678,14 @@
             </div>
         </div>
         
-        <div class="modal fade" id="detailsModal" tabindex="-1">
+<div class="modal fade" id="detailsModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">Details</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-body" id="modalBodyText">
-        Original text
-      </div>
+      <div class="modal-body" id="modalBodyText">Original text</div>
     </div>
   </div>
 </div>
@@ -697,35 +695,31 @@
   const modalEl = document.getElementById('detailsModal');
   const modalBody = document.getElementById('modalBodyText');
 
-  const modal = new bootstrap.Modal(modalEl);
+  const modal = new bootstrap.Modal(modalEl, { backdrop: true, keyboard: true });
 
-  // 0 = closed
-  // 1 = open (original text)
-  // 2 = open (text changed)
+  // 0 = closed, 1 = open (original), 2 = open (changed)
   let state = 0;
 
-  link.addEventListener('click', function (e) {
+  link.addEventListener('click', (e) => {
     e.preventDefault();
 
-    switch (state) {
-      case 0:
-        modal.show();
-        state = 1;
-        break;
-
-      case 1:
-        modalBody.textContent = 'test';
-        state = 2;
-        break;
-
-      case 2:
-        modal.hide();
-        state = 0;
-        break;
+    if (state === 0) {
+      modal.show();
+      state = 1;
+      return;
     }
+
+    if (state === 1) {
+      modalBody.textContent = 'test';
+      state = 2;
+      return;
+    }
+
+    modal.hide();
+    state = 0;
   });
 
-  // Reset if user closes modal manually (ESC, X, backdrop)
+  // If user closes via X / ESC / backdrop, reset state + text
   modalEl.addEventListener('hidden.bs.modal', () => {
     state = 0;
     modalBody.textContent = 'Original text';
