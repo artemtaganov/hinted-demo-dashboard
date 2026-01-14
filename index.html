@@ -689,12 +689,14 @@
       <div class="modal-body" id="modalBodyText">Original text</div>
 
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <!-- IMPORTANT: no data-bs-dismiss -->
+        <button type="button" class="btn btn-primary" id="modalActionBtn">
+          Next
+        </button>
       </div>
     </div>
   </div>
 </div>
-
         
         
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
@@ -710,21 +712,54 @@
     const link = document.getElementById('viewDetailsLink');
     const modalEl = document.getElementById('detailsModal');
     const modalBody = document.getElementById('modalBodyText');
+    const modalActionBtn = document.getElementById('modalActionBtn');
 
-    const modal = new bootstrap.Modal(modalEl);
-    let state = 0; // 0 closed, 1 open/original, 2 open/test
+    const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+
+    // link cycle: 1st click opens, 2nd click changes text, 3rd click closes
+    let linkState = 0; // 0 closed, 1 open/original, 2 open/test
 
     link.addEventListener('click', (e) => {
       e.preventDefault();
 
-      if (state === 0) { modal.show(); state = 1; return; }
-      if (state === 1) { modalBody.textContent = 'test'; state = 2; return; }
-      modal.hide(); state = 0;
+      if (linkState === 0) {
+        modal.show();
+        linkState = 1;
+        modalActionBtn.textContent = 'Change text';
+        return;
+      }
+
+      if (linkState === 1) {
+        modalBody.textContent = 'test';
+        linkState = 2;
+        modalActionBtn.textContent = 'Close';
+        return;
+      }
+
+      modal.hide();
+      linkState = 0;
     });
 
+    // modal footer button: change text first, then close
+    let actionState = 0; // 0 = will change, 1 = will close
+
+    modalActionBtn.addEventListener('click', () => {
+      if (actionState === 0) {
+        modalBody.textContent = 'test';
+        actionState = 1;
+        modalActionBtn.textContent = 'Close';
+        linkState = 2; // keep states consistent
+      } else {
+        modal.hide();
+      }
+    });
+
+    // reset everything if modal closes any way
     modalEl.addEventListener('hidden.bs.modal', () => {
-      state = 0;
+      linkState = 0;
+      actionState = 0;
       modalBody.textContent = 'Original text';
+      modalActionBtn.textContent = 'Next';
     });
   });
 </script>
